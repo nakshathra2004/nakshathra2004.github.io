@@ -96,3 +96,88 @@ document.addEventListener("DOMContentLoaded", function () {
 window.addEventListener("load", function () {
   setTimeout(() => window.scrollTo(0, 0), 1);
 });
+
+// Smooth scroll to #about if user scrolls down from hero section (works in both light and dark mode)
+(function() {
+  const hero = document.getElementById('home');
+  const about = document.getElementById('about');
+  let scrolled = false;
+
+  function shouldScroll() {
+    // Only trigger if we're near the top of the page and hero is mostly visible
+    return window.scrollY < 50 && hero && about;
+  }
+
+  if (hero && about) {
+    // Mouse wheel
+    hero.addEventListener('wheel', function(e) {
+      if (!scrolled && e.deltaY > 0 && shouldScroll()) {
+        scrolled = true;
+        about.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => { scrolled = false; }, 400);
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // Touch devices (swipe up)
+    let touchStartY = null;
+    hero.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 1) touchStartY = e.touches[0].clientY;
+    });
+    hero.addEventListener('touchmove', function(e) {
+      if (touchStartY !== null && e.touches.length === 1) {
+        const touchEndY = e.touches[0].clientY;
+        if (touchStartY - touchEndY > 40 && shouldScroll()) {
+          about.scrollIntoView({ behavior: 'smooth' });
+          touchStartY = null;
+        }
+      }
+    });
+    hero.addEventListener('touchend', function() { touchStartY = null; });
+  }
+})();
+
+// Smooth scroll to the next section when scrolling down from any section
+(function() {
+  const sections = Array.from(document.querySelectorAll('section[id]'));
+  let scrolled = false;
+
+  function getNextSection(current) {
+    const idx = sections.indexOf(current);
+    return idx !== -1 && idx < sections.length - 1 ? sections[idx + 1] : null;
+  }
+
+  sections.forEach(section => {
+    // Mouse wheel
+    section.addEventListener('wheel', function(e) {
+      if (!scrolled && e.deltaY > 0 && window.scrollY < section.offsetTop + 50) {
+        const next = getNextSection(section);
+        if (next) {
+          scrolled = true;
+          next.scrollIntoView({ behavior: 'smooth' });
+          setTimeout(() => { scrolled = false; }, 400);
+          e.preventDefault();
+        }
+      }
+    }, { passive: false });
+
+    // Touch devices (swipe up)
+    let touchStartY = null;
+    section.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 1) touchStartY = e.touches[0].clientY;
+    });
+    section.addEventListener('touchmove', function(e) {
+      if (touchStartY !== null && e.touches.length === 1) {
+        const touchEndY = e.touches[0].clientY;
+        if (touchStartY - touchEndY > 40 && window.scrollY < section.offsetTop + 50) {
+          const next = getNextSection(section);
+          if (next) {
+            next.scrollIntoView({ behavior: 'smooth' });
+            touchStartY = null;
+          }
+        }
+      }
+    });
+    section.addEventListener('touchend', function() { touchStartY = null; });
+  });
+})();

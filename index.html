@@ -26,8 +26,8 @@
                 <a href="#resume" class="nav-link">Resume</a>
                 <a href="#contact" class="nav-link">Contact</a>
             </nav>
-            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-                <i class="fas fa-moon" id="theme-icon"></i>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                <i id="theme-icon" class="fas fa-moon"></i>
             </button>
         </div>
     </header>
@@ -35,8 +35,13 @@
     <main class="main">
         <!-- Hero Section -->
         <section id="home" class="hero-section">
-            
-            <h1 class="hero-title" text-align="center">Hi, I'm <span class="accent">Nakshathra Nambiar</span></h1>
+            <video class="hero-bg-video" autoplay loop muted playsinline>
+                <source src="assets/hero-bg.mp4" type="video/mp4">
+                <!-- fallback text -->
+                Your browser does not support the video tag.
+            </video>
+
+            <h1 class="hero-title" text-align="center">Hey, I'm <span class="accent">Nakshathra Nambiar</span></h1>
             <p class="hero-subtitle">Or... just nat if that's easier :p</p>
             <div class="hero-links">
                 <a href="mailto:nakshathranambiar2004@gmail.com" class="hero-btn"><i class="fas fa-envelope"></i>
@@ -47,7 +52,7 @@
                     class="hero-btn"><i class="fab fa-github"></i> GitHub</a>
             </div>
         </section>
-
+        
         <!-- About Section -->
         <section class="about-section" id="about">
             <div class="about-flex">

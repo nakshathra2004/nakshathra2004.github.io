@@ -1,25 +1,102 @@
-/* === Root variables for light and dark === */
-:root {
-  --bg: #f5f7fa;
-  --bg-card: #fff;
-  --text: #23272f;
-  --text-secondary: #5a6270;
-  --accent: #6ea8fe;
-  --accent-dark: #4f8cff;
-  --border: #e0e4ea;
-  --shadow: 0 2px 16px rgba(110,168,254,0.08);
+/* --- HERO SECTION: Light/Dark background swap and text color fix --- */
+.hero-section {
+  position: relative;
+  overflow: hidden;
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
+  background: url('assets/herobg1.gif') center center/cover no-repeat;
+  color: #7a2f5a; /* Darker pink for better visibility in light mode */
+  transition: background 0.4s, color 0.3s;
 }
 
+.hero-bg-video {
+  display: none;
+}
+
+body.dark-mode .hero-section {
+  background: #6f5ea7 !important;
+  color: #fff !important;
+}
+
+body.dark-mode .hero-bg-video {
+  display: block;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100%;
+  min-width: 100vw;
+  min-height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Make sure all hero content is above the video/gif */
+.hero-section > *:not(.hero-bg-video) {
+  position: relative;
+  z-index: 2;
+}
+
+/* No overlay in light mode, only in dark mode for readability */
+.hero-section::before {
+  content: "";
+  display: none !important;
+}
+body.dark-mode .hero-section::before {
+  display: none !important;
+}
+
+/* --- HERO TEXT COLOR OVERRIDE --- */
+.hero-title,
+.hero-subtitle,
+.hero-links .hero-btn {
+  color: inherit !important;
+  text-shadow: 0 2px 8px rgba(160,75,124,0.10); /* pinkish shadow for light mode */
+}
+.hero-links .hero-btn {
+  background: #f7b2e6; /* pastel pink button for light mode */
+  color: #fff !important;
+  border: none;
+}
+.hero-links .hero-btn:hover {
+  background: #e48dc2;
+}
+body.dark-mode .hero-links .hero-btn {
+  background: #6f5ea7; /* indigo button for dark mode */
+  color: #fff !important;
+}
+body.dark-mode .hero-links .hero-btn:hover {
+  background: #3a2e5c;
+}
+
+/* --- THEME COLORS: Light mode (darker, less harsh) --- */
+:root {
+  --bg: #f6e6ef;
+  --bg-card: #f3d6e7;
+  --text: #6a2347;
+  --text-secondary: #8b4c6e;
+  --accent: #c97ab2;
+  --accent-dark: #a04b7c;
+  --border: #c97ab2;
+  --shadow: 0 2px 16px rgba(201,122,178,0.10);
+}
+
+/* --- THEME COLORS: Dark mode (deep purple/indigo) --- */
 body.dark-mode {
-  --bg: #181c22;
-  --bg-card: #23272f;
+  --bg: #1a1333;
+  --bg-card: #241a3a;
   --text: #e6eaf3;
   --text-secondary: #b0b8c9;
-  --accent: #8bbcff;
-  --accent-dark: #6ea8fe;
-  --border: #2d3440;
-  --shadow: 0 2px 16px rgba(110,168,254,0.13);
-  background: linear-gradient(135deg, #181c22 0%, #23272f 100%);
+  --accent: #5a4b8b;
+  --accent-dark: #3a2e5c;
+  --border: #3a2e5c;
+  --shadow: 0 2px 16px rgba(90,75,139,0.13);
+  background: linear-gradient(135deg, #1a1333 0%, #241a3a 100%);
 }
 
 body {
@@ -65,17 +142,46 @@ body {
   bottom: -12px;
 }
 
-/* --- HERO SECTION --- */
+/* --- HERO SECTION ---
 .hero-section {
-  text-align: center;
-  margin-bottom: 3rem;
-  padding-top: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
-  box-shadow: none;
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
+  /* Remove any background-image here if present
+}
+
+.hero-bg-video {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100%;
+  min-width: 100vw;
+  min-height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+} */
+
+/* Make sure all hero content is above the video */
+.hero-section > *:not(.hero-bg-video) {
+  position: relative;
+  z-index: 2;
+}
+
+/* Optional: overlay for readability */
+.hero-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(245,247,250,0.65); /* adjust opacity for best readability */
+  z-index: 1;
+  pointer-events: none;
 }
 
 .hero-avatar {
@@ -409,8 +515,22 @@ a:hover {
 
 .nav-link:hover,
 .nav-link.active {
-  background: var(--accent);
-  color: #fff;
+  background: #f7b2e6;
+  color: #fff !important;
+}
+body.dark-mode .header,
+body.dark-mode .header-content {
+  background: #6f5ea7 !important;
+  color: #fff !important;
+}
+body.dark-mode .logo,
+body.dark-mode .nav-link {
+  color: #fff !important;
+}
+body.dark-mode .nav-link:hover,
+body.dark-mode .nav-link.active {
+  background: #a89af2;
+  color: #241a3a !important;
 }
 
 /* Responsive: stack nav on small screens */
@@ -497,4 +617,33 @@ a:hover {
 /* === Smooth scroll === */
 html {
   scroll-behavior: smooth;
+}
+.theme-toggle {
+  background: var(--bg-card);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  padding: 0.5em 0.6em;
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: var(--accent);
+  transition: background 0.2s, border 0.2s, color 0.2s;
+  margin-left: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(110,168,254,0.08);
+}
+.theme-toggle:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent-dark);
+}
+body.dark-mode .theme-toggle {
+  background: #6f5ea7;
+  color: #fff;
+  border-color: #a89af2;
+}
+body.dark-mode .theme-toggle:hover {
+  background: #a89af2;
+  color: #241a3a;
 }
