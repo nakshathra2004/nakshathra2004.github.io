@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nakshathra Nambiar - Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,700,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Header/Navbar -->
+    <header class="header">
+        <div class="header-content">
+            <a href="#home" class="logo">Nakshathra Nambiar</a>
+            <nav class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#education" class="nav-link">Education</a>
+                <a href="#skills" class="nav-link">Skills</a>
+                <a href="#projects" class="nav-link">Projects</a>
+                <a href="#resume" class="nav-link">Resume</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                <i class="fas fa-moon" id="theme-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="main">
+        <!-- Hero Section -->
+        <section id="home" class="hero-section">
+            
+            <h1 class="hero-title" text-align="center">Hi, I'm <span class="accent">Nakshathra Nambiar</span></h1>
+            <p class="hero-subtitle">Or... just nat if that's easier :p</p>
+            <div class="hero-links">
+                <a href="mailto:nakshathranambiar2004@gmail.com" class="hero-btn"><i class="fas fa-envelope"></i>
+                    Email</a>
+                <a href="https://www.linkedin.com/in/nakshathra-nambiar/" target="_blank" rel="noopener noreferrer"
+                    class="hero-btn"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                <a href="https://github.com/nakshathra2004" target="_blank" rel="noopener noreferrer"
+                    class="hero-btn"><i class="fab fa-github"></i> GitHub</a>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about-section" id="about">
+            <div class="about-flex">
+                <div class="about-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="about-content">
+                    <h2 class="about-title">About Me</h2>
+                    <p>
+                        I’m a 20-year-old CSE student at GCE Kannur who loves building things with code. Whether it’s a small
+                        project for fun or something a bit more serious, I’m always up for a challenge.<br>
+                        Honestly, I started coding out of curiosity — and because I’d gotten into CSE. Sure, it gets tiring (and
+                        sometimes frustrating) when your code throws more errors than there are lines, but nothing beats that
+                        feeling when it finally works after hours of trying. That <em>finallyyyy</em> moment? Chef's kiss.<br>
+                        I began my coding journey with Python, thanks to the IITM online BS degree I’m pursuing alongside my
+                        BTech. Then came C and Java, courtesy of college coursework. As for web development — it all started
+                        with a bootcamp organized by SHE (a tech club at college) in my first year, and I’ve been hooked ever
+                        since. These days, I’m figuring out how to build cool stuff using Next.js.<br>
+                        Outside of code, you’ll probably find me lost in a good crime series or book, vibing to music, or just
+                        yapping and chilling with friends. (Or just listening to Epic: The Musical for the… “what”-th time now? I’ve lost count hehe :p).<br>
+                        Anyway, if you’re still curious about me, feel free to check out some of my recent projects
+                        <a href="https://github.com/nakshathra2004" target="_blank" rel="noopener noreferrer">here</a>. Or just
+                        say hi on
+                        <a href="https://www.linkedin.com/in/nakshathra-nambiar/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                        — I’m always up for a good conversation!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education Section -->
+        <section class="education-section" id="education">
+            <h2 class="section-title"><i class="fas fa-graduation-cap section-icon"></i>Education</h2>
+            <div class="education-cards">
+                <div class="edu-card">
+                    <h3>B.Tech, Computer Science</h3>
+                    <div class="edu-details">
+                        <span>Government College of Engineering, Kannur</span>
+                        <span class="edu-meta">(2022-present) &mdash; <b>7.29 CGPA</b></span>
+                    </div>
+                </div>
+                <div class="edu-card">
+                    <h3>B.S, Data Science</h3>
+                    <div class="edu-details">
+                        <span>Indian Institute of Technology, Madras</span>
+                        <span class="edu-meta">(2021-present) &mdash; <b>7.0 CGPA</b></span>
+                        <div class="edu-note">Online degree alongside BTech</div>
+                    </div>
+                </div>
+                <div class="edu-card">
+                    <h3>Higher Secondary (CBSE)</h3>
+                    <div class="edu-details">
+                        <span>Devamatha CMI Public School, Thrissur</span>
+                        <span class="edu-meta">(2020-2022) &mdash; <b>90%</b></span>
+                    </div>
+                </div>
+                <div class="edu-card">
+                    <h3>Secondary (CBSE)</h3>
+                    <div class="edu-details">
+                        <span>Kendriya Vidyalaya AFS Sulur, Coimbatore</span>
+                        <span class="edu-meta">(2013-2020) &mdash; <b>97%</b></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section class="skills-section" id="skills">
+            <h2 class="section-title"><i class="fas fa-tools section-icon"></i>Skills</h2>
+            <div class="skills-list">
+                <div class="skills-card">
+                    <h3>Programming Languages</h3>
+                    <ul>
+                        <li>C</li>
+                        <li>Java</li>
+                        <li>JavaScript</li>
+                        <li>Python</li>
+                        <li>SQL</li>
+                    </ul>
+                </div>
+                <div class="skills-card">
+                    <h3>Web Development</h3>
+                    <ul>
+                        <li>React</li>
+                        <li>Next.js</li>
+                        <li>CSS</li>
+                        <li>HTML</li>
+                    </ul>
+                </div>
+                <div class="skills-card">
+                    <h3>Tools &amp; Technologies</h3>
+                    <ul>
+                        <li>Git</li>
+                        <li>Visual Studio Code</li>
+                    </ul>
+                </div>
+                <div class="skills-card">
+                    <h3>Languages</h3>
+                    <ul>
+                        <li>English</li>
+                        <li>Malayalam</li>
+                        <li>Hindi</li>
+                        <li>Tamil</li>
+                        <li>German (A1 level)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interests Section -->
+        <section class="section" id="interests">
+            <h2 class="section-title"><i class="fas fa-lightbulb section-icon"></i>Interests</h2>
+            <ul class="interest-list">
+                <li class="interest-card">Web Development</li>
+                <li class="interest-card">Problem Solving</li>
+                <li class="interest-card">Music &amp; Books</li>
+                <li class="interest-card">Crime Series</li>
+            </ul>
+        </section>
+
+        <!-- Projects Section -->
+        <section class="projects-section" id="projects">
+            <h2 class="section-title"><i class="fas fa-project-diagram section-icon"></i>Projects</h2>
+            <div class="projects-list">
+                <div class="project-card">
+                    <h3>ReVeal</h3>
+                    <p>
+                        A web application for the Police Department of Kerala, designed to digitalize the process of
+                        disposal of vehicles which are seized by the police.
+                    </p>
+                </div>
+                <div class="project-card">
+                    <h3>
+                        <a href="https://github.com/nakshathra2004/webproject" target="_blank" rel="noopener noreferrer">
+                            Web Project <i class="fab fa-github"></i>
+                        </a>
+                    </h3>
+                    <p>
+                        A simple web project showcasing my skills in HTML, CSS, and JavaScript.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resume Section -->
+        <section class="resume-section" id="resume">
+            <h2 class="section-title"><i class="fas fa-file-alt section-icon"></i>Resume</h2>
+            <div class="resume-viewer">
+                <iframe src="resume.pdf" title="Resume PDF" width="100%" height="600px"
+                    style="border: none; border-radius: 1rem; box-shadow: 0 2px 12px rgba(44,62,80,0.09);"></iframe>
+            </div>
+            <div class="resume-actions">
+                <a href="resume.pdf" download class="resume-download-btn">
+                    <button type="button"><i class="fas fa-download"></i> Download</button>
+                </a>
+                <a href="resume.pdf" target="_blank" class="resume-download-btn">
+                    <button type="button"><i class="fas fa-eye"></i> View Fullscreen</button>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer id="contact" class="footer-section">
+        <h2 class="section-title"><i class="fas fa-envelope section-icon"></i>Contact</h2>
+        <p class="footer-text">
+            Feel free to reach out for collaborations, opportunities, or just to say hi!
+        </p>
+        <div class="footer-links">
+            <a href="mailto:nakshathranambiar2004@gmail.com" class="contact-btn">
+                <i class="fas fa-envelope"></i> Email Me
+            </a>
+            <a href="https://www.linkedin.com/in/nakshathra-nambiar/" target="_blank"
+                rel="noopener noreferrer" class="contact-btn">
+                <i class="fab fa-linkedin"></i> LinkedIn
+            </a>
+            <a href="https://github.com/nakshathra2004" target="_blank" rel="noopener noreferrer"
+                class="contact-btn">
+                <i class="fab fa-github"></i> GitHub
+            </a>
+        </div>
+        <div class="footer-copy">
+            &copy; 2025 Nakshathra Nambiar. All rights reserved.
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>
