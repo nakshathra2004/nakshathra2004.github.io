@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My little version of boredButton.com</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --text-color: #1f2937;
+            --bg-overlay: rgba(255, 255, 255, 0.95);
+            --card-bg: rgba(255, 255, 255, 0.98);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --border-color: rgba(99, 102, 241, 0.2);
+        }
+        
+        body[data-theme="dark"] {
+            --text-color: #f9fafb;
+            --bg-overlay: rgba(15, 23, 42, 0.95);
+            --card-bg: rgba(30, 41, 59, 0.98);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            --border-color: rgba(139, 92, 246, 0.3);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background: var(--bg-overlay);
+            color: var(--text-color);
+            position: relative;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('gifs/bgdlight.gif');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -1;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        body[data-theme="dark"]::before {
+            background-image: url('gifs/bgddark.gif');
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            backdrop-filter: blur(20px);
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .theme-toggle {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+        }
+        
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 120px);
+            padding: 2rem;
+        }
+        
+        #container {
+            text-align: center;
+            background: var(--card-bg);
+            padding: 3rem 2rem;
+            border-radius: 25px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            max-width: 600px;
+            width: 100%;
+            animation: fadeInUp 0.8s ease-out;
+            transition: all 0.3s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+        
+        #boredButton {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+        }
+        
+        #boredButton img {
+            width: 200px;
+            height:150px;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            display: block;
+        }
+        
+        #boredButton::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+            z-index: 1;
+            border-radius: 15px;
+        }
+        
+        #boredButton:hover::before {
+            left: 100%;
+        }
+        
+        #boredButton:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        #boredButton:hover img {
+            filter: brightness(1.1) saturate(1.2);
+        }
+        
+        #boredButton:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+        
+        #boredButton:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        #boredButton:disabled::before {
+            display: none;
+        }
+        
+        #activity {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.3s ease;
+            text-align: center;
+            line-height: 1.5;
+            flex-direction: column;
+        }
+        
+        #activity.show {
+            opacity: 1;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--primary-color);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .activity-category {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+        
+        .error-message {
+            color: #ef4444;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .theme-toggle {
+                font-size: 0.8rem;
+                padding: 0.6rem 1.2rem;
+            }
+            
+            #container {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+                border-radius: 20px;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            #boredButton img {
+                width: 160px;
+                height: 96px;
+            }
+            
+            #activity {
+                font-size: 1rem;
+                padding: 1.2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header {
+                padding: 0.8rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            #container {
+                padding: 1.5rem 1rem;
+                margin: 0.5rem;
+            }
+            
+            h2 {
+                font-size: 1.7rem;
+            }
+            
+            #boredButton img {
+                width: 140px;
+                height: 84px;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <header>
+        <h1>Bored Button</h1>
+        <button class="theme-toggle" id="themeToggle">
+            <span>🌙</span>
+            <span>Dark Mode</span>
+        </button>
+    </header>
+    <main>
+        <section id='container'>
+            <h2>Feeling bored?</h2>
+            <p class="subtitle">Click the button below to get a random activity suggestion that'll spark some excitement!</p>
+            <button id="boredButton">
+                <img src="gifs/flower.gif" alt="Bored Button" id="buttonGif">
+            </button>
+            <div id="activity"></div>
+        </section>
+    </main>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const buttonGif = document.getElementById('buttonGif');
+        
+        // Use in-memory storage instead of localStorage for Claude.ai compatibility
+        let currentTheme = 'light';
+        
+        themeToggle.addEventListener('click', () => {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            setTheme(currentTheme);
+        });
+        
+        function setTheme(theme) {
+            body.setAttribute('data-theme', theme);
+            const themeIcon = themeToggle.querySelector('span:first-child');
+            const themeText = themeToggle.querySelector('span:last-child');
+            
+            if (theme === 'dark') {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light Mode';
+                buttonGif.src = 'gifs/flower.gif';
+            } else {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark Mode';
+                buttonGif.src = 'gifs/flower.gif';
+            }
+        }
+        
+        // Enhanced activity data with categories
+        let activities = [];
+        let activitiesLoaded = false;
+        let loadingError = false;
+
+        // Load activities from JSON file
+        async function loadActivities() {
+            try {
+                const response = await fetch('./activities.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                // Validate the data structure
+                if (!Array.isArray(data)) {
+                    throw new Error('Activities data should be an array');
+                }
+                
+                // Validate each activity has required properties
+                data.forEach((activity, index) => {
+                    if (!activity.text || !activity.category) {
+                        throw new Error(`Activity at index ${index} is missing required properties`);
+                    }
+                });
+                
+                activities = data;
+                activitiesLoaded = true;
+                console.log(`Successfully loaded ${activities.length} activities`);
+                
+            } catch (error) {
+                console.error("Failed to load activities:", error);
+                loadingError = true;
+                
+                // Fallback activities in case JSON loading fails
+                activities = [
+                    { text: "Take a 10-minute walk outside", category: "Health" },
+                    { text: "Write down 3 things you're grateful for", category: "Mindful" },
+                    { text: "Learn a new word and use it in a sentence", category: "Educational" },
+                    { text: "Do 20 jumping jacks", category: "Fitness" },
+                    { text: "Call a friend you haven't spoken to in a while", category: "Social" },
+                    { text: "Draw something you can see right now", category: "Creative" },
+                    { text: "Listen to a new song and really focus on the lyrics", category: "Music" },
+                    { text: "Organize one small area of your room", category: "Productive" }
+                ];
+                activitiesLoaded = true;
+            }
+        }
+
+        // Load activities when page loads
+        loadActivities();
+        
+        // Bored button functionality
+        const boredButton = document.getElementById('boredButton');
+        const activityDiv = document.getElementById('activity');
+        
+        boredButton.addEventListener('click', () => {
+            if (!activitiesLoaded) {
+                activityDiv.innerHTML = '<div class="loading"></div><div>Loading activities...</div>';
+                activityDiv.classList.add('show');
+                return;
+            }
+
+            if (activities.length === 0) {
+                activityDiv.innerHTML = '<div class="error-message">No activities available. Please check if activities.json is in the same folder.</div>';
+                activityDiv.classList.add('show');
+                return;
+            }
+
+            boredButton.disabled = true;
+            activityDiv.innerHTML = '<div class="loading"></div>';
+            activityDiv.classList.add('show');
+
+            setTimeout(() => {
+                const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+                activityDiv.innerHTML = `
+                    <div>${randomActivity.text}</div>
+                    <div class="activity-category">${randomActivity.category}</div>
+                `;
+                if (loadingError) {
+                    activityDiv.innerHTML += '<div style="font-size: 0.8rem; opacity: 0.7; margin-top: 0.5rem;">(Using fallback activities - check console for JSON loading error)</div>';
+                }
+                boredButton.disabled = false;
+            }, 800);
+        });
+
+        
+        // Enhanced interactive animations with performance optimization
+        let animationFrame;
+        
+        document.addEventListener('mousemove', (e) => {
+            if (animationFrame) return;
+            
+            animationFrame = requestAnimationFrame(() => {
+                const container = document.getElementById('container');
+                const rect = container.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * 3;
+                    const rotateY = ((centerX - x) / centerX) * 3;
+                    
+                    container.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                } else {
+                    container.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+                }
+                
+                animationFrame = null;
+            });
+        });
+        
+        // Reset container transform when mouse leaves the page
+        document.addEventListener('mouseleave', () => {
+            const container = document.getElementById('container');
+            container.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+        });
+        
+        // Add some entrance animations
+        window.addEventListener('load', () => {
+            document.querySelector('header').style.animation = 'fadeInUp 0.6s ease-out';
+        });
+    </script>
+</body>
+</html>
