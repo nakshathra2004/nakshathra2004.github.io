@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShroomSweep</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2d1b69, #11998e);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .game-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 2px;
+            max-width: 400px;
+            margin: 0 auto 20px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tile {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tile:hover:not(.revealed) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .tile.revealed {
+            background: linear-gradient(145deg, #f093fb, #f5576c);
+            cursor: default;
+            transform: scale(0.95);
+        }
+
+        .tile.cursed {
+            background: linear-gradient(145deg, #ff416c, #ff4b2b);
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        .tile-image {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .tile.count-0 .tile-number { color: #4ecdc4; }
+        .tile.count-1 .tile-number { color: #45b7d1; }
+        .tile.count-2 .tile-number { color: #96ceb4; }
+        .tile.count-3 .tile-number { color: #ffeaa7; }
+        .tile.count-4 .tile-number { color: #fab1a0; }
+        .tile.count-5 .tile-number { color: #fd79a8; }
+        .tile.count-6 .tile-number { color: #e17055; }
+        .tile.count-7 .tile-number { color: #d63031; }
+        .tile.count-8 .tile-number { color: #74b9ff; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .new-game-btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .new-game-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            transform: scale(0.8) translateY(50px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-content.win {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+        }
+
+        .modal-content.lose {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .character-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            border: 4px solid rgba(255,255,255,0.3);
+            transition: all 0.5s ease;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            animation: fadeInImage 0.8s ease-in-out 0.3s forwards;
+        }
+
+        .character-image.cursed {
+            animation: cursed-takeover 1s ease-in-out, fadeInImage 0.8s ease-in-out 0.3s forwards;
+            border-color: #ff4b2b;
+        }
+
+        @keyframes fadeInImage {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes cursed-takeover {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+
+        .character-name {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .character-quote {
+            font-size: 1.1rem;
+            font-style: italic;
+            margin-bottom: 20px;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .modal-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-color: transparent;
+        }
+
+        .floating-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0; }
+            50% { transform: translateY(-50px) scale(1.5); opacity: 1; }
+        }
+
+        /* Image loading error fallback */
+        .character-image.error {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🍄 ShroomSweep 🍄</h1>
+        
+        <div class="game-info">
+            <div>Safe Tiles: <span id="safe-count">0</span>/20</div>
+            <div>Cursed Tiles: <span id="cursed-count">5</span></div>
+        </div>
+        
+        <div class="grid" id="game-grid"></div>
+        
+        <button class="new-game-btn" onclick="initGame()">New Game</button>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-content" id="modal-content">
+            <div class="floating-particles" id="particles"></div>
+            <div class="character-image" id="character-image">🍄</div>
+            <div class="character-name" id="character-name">Mushroom Girl</div>
+            <div class="character-quote" id="character-quote">"Welcome to the forest!"</div>
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="initGame(); closeModal();">Play Again</button>
+                <button class="modal-btn" onclick="showGallery()">View Gallery</button>
+                <button class="modal-btn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let gameGrid = [];
+        let gameSize = 5;
+        let cursedCount = 5;
+        let revealedCount = 0;
+        let gameOver = false;
+        let unlockedGirls = [];
+
+        // Mushroom girls data
+        const mushroomGirls = [
+            {
+                name: "Luna the Mystic",
+                quote: "The forest whispers secrets to those who listen carefully.",
+                emoji: "🌙",
+                id: "luna"
+            },
+            {
+                name: "Rosa the Blooming",
+                quote: "Every flower tells a story of resilience and beauty.",
+                emoji: "🌹",
+                id: "rosa"
+            },
+            {
+                name: "Sage the Wise",
+                quote: "Knowledge grows like mushrooms after rain.",
+                emoji: "🧙‍♀️",
+                id: "sage"
+            },
+            {
+                name: "Ivy the Wild",
+                quote: "Nature's chaos is more beautiful than human order.",
+                emoji: "🌿",
+                id: "ivy"
+            },
+            {
+                name: "Crystal the Pure",
+                quote: "Clarity comes to those who embrace the light within.",
+                emoji: "💎",
+                id: "crystal"
+            },
+            {
+                name: "Ember the Fierce",
+                quote: "Like fire, I burn bright and leave warmth in my wake.",
+                emoji: "🔥",
+                id: "ember"
+            }
+        ];
+
+        // Cursed mushroom data
+        const cursedMushroom = {
+            name: "The Cursed One",
+            quote: "You should have been more careful... but don't worry, try again!",
+            emoji: "💀"
+        };
+
+        // Mushroom image mapping for adjacent counts (0-8)
+        const mushroomImages = {
+            0: "assets/m0.png",
+            1: "assets/l1.png", 
+            2: "assets/l2.png",
+            3: "assets/l3.png",
+            4: "assets/l4.png",
+            5: "assets/l5.png",
+            6: "assets/l6.png",
+            7: "assets/l7.png",
+            8: "assets/l8.png"
+        };
+
+        // Fallback emojis if images fail to load
+        const mushroomEmojis = ["🌱", "🍄", "🍄‍🟫", "🔴", "🟠", "🟡", "🟢", "🔵", "🟣"];
+
+        function initGame() {
+            gameGrid = [];
+            revealedCount = 0;
+            gameOver = false;
+            
+            // Create grid
+            for (let i = 0; i < gameSize * gameSize; i++) {
+                gameGrid.push({
+                    isCursed: false,
+                    isRevealed: false,
+                    adjacentCount: 0
+                });
+            }
+            
+            // Place cursed mushrooms
+            let cursedPlaced = 0;
+            while (cursedPlaced < cursedCount) {
+                let randomIndex = Math.floor(Math.random() * gameGrid.length);
+                if (!gameGrid[randomIndex].isCursed) {
+                    gameGrid[randomIndex].isCursed = true;
+                    cursedPlaced++;
+                }
+            }
+            
+            // Calculate adjacent counts
+            for (let i = 0; i < gameGrid.length; i++) {
+                if (!gameGrid[i].isCursed) {
+                    gameGrid[i].adjacentCount = getAdjacentCursedCount(i);
+                }
+            }
+            
+            renderGrid();
+            updateUI();
+        }
+
+        function getAdjacentCursedCount(index) {
+            let count = 0;
+            let row = Math.floor(index / gameSize);
+            let col = index % gameSize;
+            
+            for (let r = Math.max(0, row - 1); r <= Math.min(gameSize - 1, row + 1); r++) {
+                for (let c = Math.max(0, col - 1); c <= Math.min(gameSize - 1, col + 1); c++) {
+                    if (r === row && c === col) continue;
+                    let adjacentIndex = r * gameSize + c;
+                    if (gameGrid[adjacentIndex].isCursed) {
+                        count++;
+                    }
+                }
+            }
+            
+            return count;
+        }
+
+        function renderGrid() {
+            const gridElement = document.getElementById('game-grid');
+            gridElement.innerHTML = '';
+            
+            gameGrid.forEach((tile, index) => {
+                const tileElement = document.createElement('button');
+                tileElement.className = 'tile';
+                tileElement.onclick = () => revealTile(index);
+                
+                if (tile.isRevealed) {
+                    tileElement.classList.add('revealed');
+                    if (tile.isCursed) {
+                        tileElement.classList.add('cursed');
+                        tileElement.textContent = '💀';
+                    } else {
+                        tileElement.classList.add(`count-${tile.adjacentCount}`);
+                        
+                        // Create image element for mushroom
+                        const img = document.createElement('img');
+                        img.className = 'tile-image';
+                        img.src = mushroomImages[tile.adjacentCount];
+                        img.alt = `Mushroom ${tile.adjacentCount}`;
+                        
+                        // Fallback to emoji if image fails to load
+                        img.onerror = function() {
+                            tileElement.innerHTML = '';
+                            const fallbackSpan = document.createElement('span');
+                            fallbackSpan.className = 'tile-number';
+                            fallbackSpan.textContent = tile.adjacentCount === 0 ? '🌱' : tile.adjacentCount;
+                            tileElement.appendChild(fallbackSpan);
+                        };
+                        
+                        tileElement.appendChild(img);
+                    }
+                }
+                
+                gridElement.appendChild(tileElement);
+            });
+        }
+
+        function revealTile(index) {
+            if (gameOver || gameGrid[index].isRevealed) return;
+            
+            gameGrid[index].isRevealed = true;
+            
+            if (gameGrid[index].isCursed) {
+                // Game over - show cursed mushroom
+                gameOver = true;
+                showLoseModal();
+            } else {
+                revealedCount++;
+                
+                // Auto-reveal adjacent tiles if count is 0
+                if (gameGrid[index].adjacentCount === 0) {
+                    revealAdjacentTiles(index);
+                }
+                
+                // Check win condition
+                if (revealedCount === gameSize * gameSize - cursedCount) {
+                    gameOver = true;
+                    showWinModal();
+                }
+            }
+            
+            renderGrid();
+            updateUI();
+        }
+
+        function revealAdjacentTiles(index) {
+            let row = Math.floor(index / gameSize);
+            let col = index % gameSize;
+            
+            for (let r = Math.max(0, row - 1); r <= Math.min(gameSize - 1, row + 1); r++) {
+                for (let c = Math.max(0, col - 1); c <= Math.min(gameSize - 1, col + 1); c++) {
+                    if (r === row && c === col) continue;
+                    let adjacentIndex = r * gameSize + c;
+                    if (!gameGrid[adjacentIndex].isRevealed && !gameGrid[adjacentIndex].isCursed) {
+                        gameGrid[adjacentIndex].isRevealed = true;
+                        revealedCount++;
+                        
+                        // Recursively reveal if this tile also has 0 adjacent cursed tiles
+                        if (gameGrid[adjacentIndex].adjacentCount === 0) {
+                            revealAdjacentTiles(adjacentIndex);
+                        }
+                    }
+                }
+            }
+        }
+
+        function showWinModal() {
+            const randomGirl = mushroomGirls[Math.floor(Math.random() * mushroomGirls.length)];
+            
+            // Add to unlocked girls
+            if (!unlockedGirls.includes(randomGirl.id)) {
+                unlockedGirls.push(randomGirl.id);
+            }
+            
+            showModal(randomGirl, true);
+        }
+
+        function showLoseModal() {
+            showModal(cursedMushroom, false);
+        }
+
+        function showModal(character, isWin) {
+            const modal = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
+            const image = document.getElementById('character-image');
+            const name = document.getElementById('character-name');
+            const quote = document.getElementById('character-quote');
+            
+            // Set character data
+            name.textContent = character.name;
+            quote.textContent = character.quote;
+            
+            // Set modal style
+            content.className = 'modal-content';
+            image.className = 'character-image';
+            
+            if (isWin) {
+                content.classList.add('win');
+                createParticles();
+                
+                // Set random mushroom girl image (g1.jpg to g8.jpg)
+                const randomGirlNumber = Math.floor(Math.random() * 8) + 1;
+                setCharacterImage(image, `assets/g${randomGirlNumber}.jpg`, character.emoji);
+                
+            } else {
+                content.classList.add('lose');
+                image.classList.add('cursed');
+                
+                // Set cursed mushroom image (b1.png)
+                setCharacterImage(image, 'assets/b1.png', character.emoji);
+            }
+            
+            // Show modal with animation
+            modal.classList.add('active');
+        }
+
+        function setCharacterImage(imageElement, imagePath, fallbackEmoji) {
+            // Reset any previous state
+            imageElement.style.backgroundImage = '';
+            imageElement.textContent = '';
+            imageElement.classList.remove('error');
+            
+            // Create a new image to test if it loads
+            const img = new Image();
+            
+            img.onload = function() {
+                // Image loaded successfully
+                imageElement.style.backgroundImage = `url('${imagePath}')`;
+                imageElement.textContent = ''; // Clear any fallback text
+            };
+            
+            img.onerror = function() {
+                // Image failed to load, show emoji fallback
+                imageElement.style.backgroundImage = '';
+                imageElement.textContent = fallbackEmoji;
+                imageElement.classList.add('error');
+                console.warn(`Failed to load image: ${imagePath}, using fallback emoji: ${fallbackEmoji}`);
+            };
+            
+            // Start loading the image
+            img.src = imagePath;
+            
+            // Show emoji initially while image loads
+            imageElement.textContent = fallbackEmoji;
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal-overlay');
+            modal.classList.remove('active');
+            
+            // Clear particles
+            document.getElementById('particles').innerHTML = '';
+        }
+
+        function createParticles() {
+            const container = document.getElementById('particles');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        function showGallery() {
+            let galleryText = "Gallery:\n\n";
+            
+            mushroomGirls.forEach(girl => {
+                if (unlockedGirls.includes(girl.id)) {
+                    galleryText += `✅ ${girl.name} - "${girl.quote}"\n`;
+                } else {
+                    galleryText += `🔒 ??? - Locked\n`;
+                }
+            });
+            
+            alert(galleryText);
+        }
+
+        function updateUI() {
+            document.getElementById('safe-count').textContent = revealedCount;
+        }
+
+        // Initialize game on load
+        initGame();
+    </script>
+</body>
+</html>
