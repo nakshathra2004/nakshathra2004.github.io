@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Winter Hopscotch</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="game-container">
         <div class="game-info">
@@ -30,39 +32,39 @@
                 <div class="tile" data-number="9">9</div>
                 <div class="tile" data-number="10">10</div>
             </div>
-            
+
             <!-- Row 3: Tile 8 -->
             <div class="row">
                 <div class="tile" data-number="8">8</div>
             </div>
-            
+
             <!-- Row 2: Tiles 6-7 -->
             <div class="row">
                 <div class="tile" data-number="6">6</div>
                 <div class="tile" data-number="7">7</div>
             </div>
-            
+
             <!-- Row 1: Tile 5 -->
             <div class="row">
                 <div class="tile" data-number="5">5</div>
             </div>
-            
+
             <!-- Row 0: Tiles 3-4 -->
             <div class="row">
                 <div class="tile" data-number="3">3</div>
                 <div class="tile" data-number="4">4</div>
             </div>
-            
+
             <!-- Row -1: Tile 2 -->
             <div class="row">
                 <div class="tile" data-number="2">2</div>
             </div>
-            
+
             <!-- Row -2: Tile 1 -->
             <div class="row">
                 <div class="tile" data-number="1">1</div>
             </div>
-            
+
             <!-- Starting/Ending Stone -->
             <div class="row">
                 <div class="tile starting-stone" data-number="0">START</div>
@@ -75,6 +77,17 @@
         </div>
     </div>
 
-    <script src="scripts.js"></script>
+    <!-- Popup Overlay -->
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup" id="popup">
+            <div class="popup-icon" id="popupIcon"></div>
+            <div class="popup-header" id="popupHeader"></div>
+            <div class="popup-message" id="popupMessage"></div>
+            <button class="popup-button" id="popupButton" onclick="closePopup()">OK</button>
+        </div>
+    </div>
+
+    <script src="scripts.js"> </script>
 </body>
+
 </html>

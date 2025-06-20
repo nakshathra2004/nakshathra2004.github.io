@@ -10,6 +10,58 @@ let roundTimer = null;
 let roundTimeLimit = 60; // 60 seconds per round
 let gameStartTime = null;
 
+function showPopup(icon, header, message, type = 'default') {
+    const overlay = document.getElementById('popupOverlay');
+    const popup = document.getElementById('popup');
+    const popupIcon = document.getElementById('popupIcon');
+    const popupHeader = document.getElementById('popupHeader');
+    const popupMessage = document.getElementById('popupMessage');
+    const popupButton = document.getElementById('popupButton');
+
+    // Reset classes
+    popup.className = 'popup';
+    popupButton.className = 'popup-button';
+
+    // Set content
+    popupIcon.textContent = icon;
+    popupHeader.textContent = header;
+    popupMessage.innerHTML = message;
+
+    // Apply type-specific styling
+    switch (type) {
+        case 'success':
+            popup.classList.add('success');
+            popupButton.classList.add('success');
+            break;
+        case 'warning':
+            popup.classList.add('warning');
+            popupButton.classList.add('warning');
+            break;
+        case 'danger':
+            popup.classList.add('danger');
+            popupButton.classList.add('danger');
+            break;
+        case 'victory':
+            popup.classList.add('victory');
+            popupButton.classList.add('success');
+            break;
+    }
+
+    overlay.style.display = 'flex';
+}
+
+function closePopup() {
+    const overlay = document.getElementById('popupOverlay');
+    overlay.style.display = 'none';
+}
+
+// Close popup when clicking overlay
+document.getElementById('popupOverlay').addEventListener('click', function (e) {
+    if (e.target === this) {
+        closePopup();
+    }
+});
+
 function updateGameStatus(message) {
     document.getElementById('gameStatus').textContent = message;
 }
@@ -57,11 +109,21 @@ function loseLife(reason) {
         updateGameStatus("Game Over! Click Reset to try again.");
         document.getElementById('throwBtn').disabled = true;
         setTimeout(() => {
-            alert(`💀 Game Over! ${reason}\n\nYou made it to Round ${currentRound}. Try again!`);
+            showPopup(
+                '💀',
+                'Game Over!',
+                `${reason}<br><br><strong>You made it to Round ${currentRound}</strong><br>Try again!`,
+                'danger'
+            );
         }, 100);
     } else {
         setTimeout(() => {
-            alert(`💔 ${reason}\nLives remaining: ${lives}`);
+            showPopup(
+                '💔',
+                'Oops!',
+                `${reason}<br><br><strong>Lives remaining: ${lives}</strong>`,
+                'warning'
+            );
             resetRound();
         }, 100);
     }
@@ -209,14 +271,26 @@ document.querySelectorAll('.tile').forEach(tile => {
                 // Completed the round - reached starting stone
                 stopRoundTimer();
                 setTimeout(() => {
-                    alert(`🎉 Round ${currentRound} complete!\nWell done!`);
+                    showPopup(
+                        '🎉',
+                        `Round ${currentRound} Complete!`,
+                        'Well done! Get ready for the next round.',
+                        'success'
+                    );
                     currentRound++;
 
                     if (currentRound > 10) {
                         clearInterval(gameTimer);
                         const finalTime = document.getElementById('timer').textContent;
                         updateGameStatus("🏆 VICTORY! You're a hopscotch champion!");
-                        alert(`🏆 VICTORY! You've mastered Winter Hopscotch!\n\nFinal ${finalTime}\nLives remaining: ${lives}/3\n\nYou're a hopscotch champion! ❄️`);
+                        setTimeout(() => {
+                            showPopup(
+                                '🏆',
+                                'VICTORY!',
+                                `You've mastered Winter Hopscotch!<br><br><strong>Final ${finalTime}</strong><br><strong>Lives remaining: ${lives}/3</strong><br><br>You're a hopscotch champion! ❄️`,
+                                'victory'
+                            );
+                        }, 500);
                         gameState = 'won';
                     } else {
                         resetRound();
@@ -258,6 +332,7 @@ function resetGame() {
     document.getElementById('throwBtn').disabled = false;
     updateGameStatus("Click 'Throw Stone' to start!");
     resetRound();
+    closePopup(); // Close any open popups
 }
 
 // Initialize the display
