@@ -255,10 +255,12 @@ document.querySelectorAll('.tile').forEach(tile => {
         currentPosition = tileNumber;
         updateVisitedTiles();
 
-        // Check game progression
+        // Check game progression - FIXED LOGIC HERE
         if (direction === 'up') {
-            if (currentPosition === 10) {
-                // Reached the end, now go back down
+            // Check if we've reached the highest possible tile
+            let nextValidTile = getNextValidTile(currentPosition + 1);
+            if (nextValidTile === -1 || nextValidTile > 10) {
+                // We've reached as high as we can go, now go back down
                 direction = 'down';
                 gameState = 'hopDown';
                 updateGameStatus("Now hop back to START! Skip the stone!");
