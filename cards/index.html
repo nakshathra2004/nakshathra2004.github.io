@@ -1,0 +1,976 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoodCrate - Unbox a little care today</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #fdf4f0;
+            --bg-secondary: #f9e8e0;
+            --text-primary: #5a4a3a;
+            --text-secondary: #8b7355;
+            --accent-pink: #f4a6cd;
+            --accent-yellow: #f7d794;
+            --accent-cream: #faf0e6;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-medium: rgba(0, 0, 0, 0.2);
+            --border-radius: 12px;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #2a2438;
+            --bg-secondary: #3d3551;
+            --text-primary: #e8dff0;
+            --text-secondary: #c4b5d1;
+            --accent-pink: #8b5a8c;
+            --accent-yellow: #7a6b47;
+            --accent-cream: #4a4458;
+            --shadow-light: rgba(0, 0, 0, 0.3);
+            --shadow-medium: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'VT323', monospace;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(244, 166, 205, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(247, 215, 148, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(250, 240, 230, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+            animation: floatBg 20s ease-in-out infinite;
+        }
+
+        @keyframes floatBg {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
+        }
+
+        /* Header Styles */
+        .header {
+            text-align: center;
+            padding: 2rem 1rem 1rem;
+            position: relative;
+        }
+
+        .title {
+            font-family: 'Pixelify Sans', cursive;
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            text-shadow: 
+                3px 3px 0px var(--shadow-light),
+                0 0 20px rgba(244, 166, 205, 0.3);
+            letter-spacing: 2px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { text-shadow: 3px 3px 0px var(--shadow-light), 0 0 20px rgba(244, 166, 205, 0.3); }
+            100% { text-shadow: 3px 3px 0px var(--shadow-light), 0 0 30px rgba(247, 215, 148, 0.4); }
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-weight: 400;
+            animation: subtitleFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes subtitleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: var(--accent-cream);
+            border: 3px solid var(--text-primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 4px 4px 0px var(--shadow-medium);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(244, 166, 205, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .theme-toggle:hover::before {
+            width: 100px;
+            height: 100px;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px) scale(1.1);
+            box-shadow: 6px 6px 0px var(--shadow-medium);
+        }
+
+        .theme-toggle:active {
+            transform: translateY(0) scale(1);
+            box-shadow: 2px 2px 0px var(--shadow-medium);
+        }
+
+        /* Crates Container */
+        .crates-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 2rem 1rem;
+            flex-wrap: wrap;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Individual Crate */
+        .crate {
+            width: 150px;
+            height: 150px;
+            border: 4px solid var(--text-primary);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 6px 6px 0px var(--shadow-medium);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--accent-cream) 0%, var(--bg-secondary) 100%);
+        }
+
+        .crate::before {
+            content: '?';
+            position: absolute;
+            font-size: 3rem;
+            color: var(--text-primary);
+            opacity: 0.3;
+            z-index: 1;
+            animation: questionFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes questionFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-10px) rotate(5deg); opacity: 0.5; }
+        }
+
+        .crate-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.3s ease;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            z-index: 2;
+            position: relative;
+        }
+
+        .crate:hover {
+            transform: translateY(-8px) rotate(2deg);
+            box-shadow: 8px 12px 0px var(--shadow-medium);
+            animation: crateHover 0.6s ease-in-out infinite alternate;
+        }
+
+        .crate:hover::before {
+            animation: questionExcited 0.3s ease-in-out infinite;
+        }
+
+        @keyframes questionExcited {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(10deg); }
+        }
+
+        .crate:active {
+            transform: translateY(-4px) rotate(1deg);
+            box-shadow: 4px 8px 0px var(--shadow-medium);
+        }
+
+        @keyframes crateHover {
+            0% { transform: translateY(-8px) rotate(2deg); }
+            100% { transform: translateY(-10px) rotate(-1deg); }
+        }
+
+        /* Crate Opening Animation */
+        .crate.opening {
+            animation: crateOpen 0.8s ease-out forwards;
+        }
+
+        @keyframes crateOpen {
+            0% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(5deg); }
+            50% { transform: scale(0.9) rotate(-5deg); }
+            75% { transform: scale(1.05) rotate(2deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 0.3; }
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; backdrop-filter: blur(0px); }
+            to { opacity: 1; backdrop-filter: blur(10px); }
+        }
+
+        /* Base Mood Card */
+        .mood-card {
+            background: var(--bg-primary);
+            border: 4px solid var(--text-primary);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            box-shadow: 8px 8px 0px var(--shadow-medium);
+            animation: cardSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        .mood-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .mood-card:hover::before {
+            opacity: 1;
+            animation: shimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes cardSlideIn {
+            from {
+                transform: scale(0.7) translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .mood-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+            animation: iconFloat 2s ease-in-out infinite;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.05); }
+        }
+
+        .mood-title {
+            font-family: 'Pixelify Sans', cursive;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .mood-affirmation {
+            font-size: 1.3rem;
+            line-height: 1.4;
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            position: relative;
+            z-index: 2;
+            padding: 0 1rem;
+        }
+
+        .mood-task {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--accent-cream);
+            border: 2px solid var(--text-primary);
+            border-radius: 8px;
+            color: var(--text-primary);
+            position: relative;
+            z-index: 2;
+            box-shadow: inset 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        .task-label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Audio Placeholder */
+        .audio-placeholder {
+            margin: 1rem 0;
+            padding: 0.8rem;
+            background: var(--bg-secondary);
+            border: 2px dashed var(--text-secondary);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 2;
+            animation: audioPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes audioPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* Replay Button */
+        .replay-btn {
+            background: var(--accent-pink);
+            color: var(--text-primary);
+            border: 3px solid var(--text-primary);
+            padding: 0.8rem 2rem;
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 4px 4px 0px var(--shadow-medium);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .replay-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .replay-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .replay-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 6px 6px 0px var(--shadow-medium);
+            background: var(--accent-yellow);
+        }
+
+        .replay-btn:active {
+            transform: translateY(0);
+            box-shadow: 2px 2px 0px var(--shadow-medium);
+        }
+
+        /* Mood-specific card styles */
+        .mood-card.soft {
+            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #f9d0dd 100%);
+            border-color: #f4a6cd;
+            box-shadow: 
+                8px 8px 0px var(--shadow-medium),
+                0 0 30px rgba(244, 166, 205, 0.3);
+        }
+
+        .mood-card.soft .mood-task {
+            background: linear-gradient(135deg, #fce7f3, #f9d0dd);
+            border-color: #f4a6cd;
+        }
+
+        .mood-card.stormy {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%);
+            border-color: #64748b;
+            box-shadow: 
+                8px 8px 0px var(--shadow-medium),
+                0 0 30px rgba(100, 116, 139, 0.3);
+        }
+
+        .mood-card.stormy .mood-task {
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+            border-color: #64748b;
+        }
+
+        .mood-card.sunshine {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fde68a 100%);
+            border-color: #fbbf24;
+            box-shadow: 
+                8px 8px 0px var(--shadow-medium),
+                0 0 30px rgba(251, 191, 36, 0.3);
+        }
+
+        .mood-card.sunshine .mood-task {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-color: #fbbf24;
+        }
+
+        .mood-card.reset {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #bfdbfe 100%);
+            border-color: #3b82f6;
+            box-shadow: 
+                8px 8px 0px var(--shadow-medium),
+                0 0 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .mood-card.reset .mood-task {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            border-color: #3b82f6;
+        }
+
+        .mood-card.feral {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);
+            border-color: #22c55e;
+            box-shadow: 
+                8px 8px 0px var(--shadow-medium),
+                0 0 30px rgba(34, 197, 94, 0.3);
+        }
+
+        .mood-card.feral .mood-task {
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            border-color: #22c55e;
+        }
+
+        .mood-card.pixel {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+            border-color: #475569;
+            box-shadow: 
+                8px 8px 0px var(--shadow-medium),
+                0 0 30px rgba(71, 85, 105, 0.3);
+            position: relative;
+        }
+
+        .mood-card.pixel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(90deg, transparent 0%, rgba(71, 85, 105, 0.1) 50%, transparent 100%);
+            animation: pixelScan 3s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pixelScan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .mood-card.pixel .mood-task {
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+            border-color: #475569;
+        }
+
+        .mood-card.moonchild {
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #e9d5ff 100%);
+            border-color: #8b5cf6;
+            box-shadow: 
+                8px 8px 0px var(--shadow-medium),
+                0 0 30px rgba(139, 92, 246, 0.3);
+        }
+
+        .mood-card.moonchild .mood-task {
+            background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+            border-color: #8b5cf6;
+        }
+
+        .mood-card.chaos {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 50%, #fca5a5 100%);
+            border-color: #ef4444;
+            box-shadow: 
+                8px 8px 0px var(--shadow-medium),
+                0 0 30px rgba(239, 68, 68, 0.3);
+            animation: chaosShake 0.1s ease-in-out infinite;
+        }
+
+        @keyframes chaosShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-1px); }
+            75% { transform: translateX(1px); }
+        }
+
+        .mood-card.chaos .mood-task {
+            background: linear-gradient(135deg, #fecaca, #fca5a5);
+            border-color: #ef4444;
+        }
+
+        .mood-card.doodle {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fed7aa 100%);
+            border-color: #f59e0b;
+            box-shadow: 
+                8px 8px 0px var(--shadow-medium),
+                0 0 30px rgba(245, 158, 11, 0.3);
+        }
+
+        .mood-card.doodle .mood-task {
+            background: linear-gradient(135deg, #fef3c7, #fed7aa);
+            border-color: #f59e0b;
+        }
+
+        .mood-card.rainy {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%);
+            border-color: #0ea5e9;
+            box-shadow: 
+                8px 8px 0px var(--shadow-medium),
+                0 0 30px rgba(14, 165, 233, 0.3);
+            position: relative;
+        }
+
+        .mood-card.rainy::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(14, 165, 233, 0.1) 2px,
+                    rgba(14, 165, 233, 0.1) 4px
+                );
+            animation: rainDrop 1s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rainDrop {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .mood-card.rainy .mood-task {
+            background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+            border-color: #0ea5e9;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .theme-toggle {
+                top: 1rem;
+                right: 1rem;
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .crates-container {
+                gap: 1.5rem;
+                padding: 1rem;
+            }
+
+            .crate {
+                width: 120px;
+                height: 120px;
+            }
+
+            .crate::before {
+                font-size: 2.5rem;
+            }
+
+            .mood-card {
+                padding: 1.5rem;
+                margin: 1rem;
+                max-width: 350px;
+            }
+
+            .mood-title {
+                font-size: 1.5rem;
+            }
+
+            .mood-affirmation {
+                font-size: 1.1rem;
+            }
+
+            .mood-task {
+                font-size: 1rem;
+            }
+
+            .mood-icon {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .crates-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .crate {
+                width: 140px;
+                height: 140px;
+            }
+
+            .mood-card {
+                max-width: 300px;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Header -->
+    <header class="header">
+        <h1 class="title">MoodCrate</h1>
+        <p class="subtitle">Unbox a little care today.</p>
+        
+        <!-- Theme Toggle -->
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <span id="themeIcon">☀️</span>
+        </button>
+    </header>
+
+    <!-- Main Crates Container -->
+    <main class="crates-container">
+        <div class="crate" data-crate="1"></div>
+        <div class="crate" data-crate="2"></div>
+        <div class="crate" data-crate="3"></div>
+    </main>
+
+    <!-- Modal for Mood Cards -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="mood-card" id="moodCard">
+            <span class="mood-icon" id="moodIcon"></span>
+            <h2 class="mood-title" id="moodTitle"></h2>
+            <p class="mood-affirmation" id="moodAffirmation"></p>
+            <div class="mood-task">
+                <span class="task-label">Try this:</span>
+                <span id="moodTask"></span>
+            </div>
+             <!-- Uncomment this when audio is ready
+            <div class="audio-placeholder">
+                🎵 Soothing sounds coming soon...
+            </div>  -->
+            <button class="replay-btn" id="replayBtn">Discover Again</button>
+        </div>
+    </div>
+
+    <script>
+        const moods = [
+            {
+                name: 'Soft',
+                icon: '🧸',
+                affirmation: 'You are allowed to rest.',
+                task: 'Wrap yourself up in your coziest blanket and breathe deeply.',
+                className: 'soft'
+            },
+            {
+                name: 'Stormy',
+                icon: '🌧️',
+                affirmation: "It's okay to be a cloud sometimes.",
+                task: 'Journal your thoughts or scream into a pillow - let it out.',
+                className: 'stormy'
+            },
+            {
+                name: 'Sunshine',
+                icon: '🌻',
+                affirmation: 'You bring warmth to someone\'s day.',
+                task: 'Step outside and sit in sunlight for 2 minutes.',
+                className: 'sunshine'
+            },
+            {
+                name: 'Reset',
+                icon: '🌀',
+                affirmation: 'You can always begin again.',
+                task: 'Splash cold water on your face and take three deep breaths.',
+                className: 'reset'
+            },
+            {
+                name: 'Feral Calm',
+                icon: '🐾',
+                affirmation: 'Even wild hearts deserve peace.',
+                task: 'Go outside, stretch like a cat, snarl at the sky (gently).',
+                className: 'feral'
+            },
+            {
+                name: 'Pixel Repair',
+                icon: '🛠️',
+                affirmation: 'You\'re glitchy, not broken.',
+                task: 'Organize one corner of your room, no pressure to finish.',
+                className: 'pixel'
+            },
+            {
+                name: 'Moonchild',
+                icon: '🌙',
+                affirmation: 'You are lunar, lovely, and glowing in your own phase.',
+                task: 'Dim the lights, light a candle, and vibe with silence.',
+                className: 'moonchild'
+            },
+            {
+                name: 'Cozy Chaos',
+                icon: '🔥',
+                affirmation: 'You\'re a beautiful mess and that\'s okay.',
+                task: 'Put on mismatched socks and dance to your favorite chaotic song.',
+                className: 'chaos'
+            },
+            {
+                name: 'Doodle Mood',
+                icon: '✏️',
+                affirmation: 'Your scribbles matter.',
+                task: 'Grab paper. Doodle nonsense. Let your pen wander.',
+                className: 'doodle'
+            },
+            {
+                name: 'Rainy Window',
+                icon: '☔',
+                affirmation: 'The rain doesn\'t rush. You shouldn\'t either.',
+                task: 'Watch rain sounds for 5 minutes. Don\'t multitask.',
+                className: 'rainy'
+            }
+        ];
+
+/*
+might think of adding a video background later.
+*/
+
+
+
+        // DOM Elements
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const crates = document.querySelectorAll('.crate');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const moodCard = document.getElementById('moodCard');
+        const moodIcon = document.getElementById('moodIcon');
+        const moodTitle = document.getElementById('moodTitle');
+        const moodAffirmation = document.getElementById('moodAffirmation');
+        const moodTask = document.getElementById('moodTask');
+        const replayBtn = document.getElementById('replayBtn');
+
+        // Theme Toggle Functionality
+        let isDarkTheme = false;
+
+        themeToggle.addEventListener('click', () => {
+            isDarkTheme = !isDarkTheme;
+            const body = document.body;
+            
+            if (isDarkTheme) {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '🌙';
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.textContent = '☀️';
+            }
+        });
+
+        // Crate Click Functionality
+        crates.forEach(crate => {
+            crate.addEventListener('click', function() {
+                // Disable all crates temporarily
+                crates.forEach(c => c.style.pointerEvents = 'none');
+                
+                // Add opening animation
+                this.classList.add('opening');
+                
+                // TODO: Add audio effect here when audio is implemented
+                // playOpeningSound();
+                
+                // After animation, show random mood card
+                setTimeout(() => {
+                    showRandomMoodCard();
+                    // Re-enable crates
+                    crates.forEach(c => {
+                        c.style.pointerEvents = 'auto';
+                        c.classList.remove('opening');
+                    });
+                }, 800);
+            });
+        });
+
+        // Show Random Mood Card
+        function showRandomMoodCard() {
+            const randomMood = moods[Math.floor(Math.random() * moods.length)];
+            
+            // Update card content
+            moodIcon.textContent = randomMood.icon;
+            moodTitle.textContent = randomMood.name;
+            moodAffirmation.textContent = randomMood.affirmation;
+            moodTask.textContent = randomMood.task;
+            
+            // Apply mood-specific styling
+            moodCard.className = `mood-card ${randomMood.className}`;
+            
+            // Show modal
+            modalOverlay.classList.add('show');
+            
+            // TODO: Add audio effect here when audio is implemented
+            // playMoodAudio(randomMood.name);
+        }
+
+        // Replay Button Functionality
+        replayBtn.addEventListener('click', () => {
+            modalOverlay.classList.remove('show');
+            
+            // TODO: Add closing audio effect here when audio is implemented
+            // playClosingSound();
+        });
+
+        // Close modal when clicking overlay
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlay.classList.remove('show');
+            }
+        });
+
+        // Keyboard accessibility
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('show')) {
+                modalOverlay.classList.remove('show');
+            }
+        });
+
+        // Add some random sparkle effects (optional enhancement)
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.style.position = 'fixed';
+            sparkle.style.pointerEvents = 'none';
+            sparkle.style.fontSize = '20px';
+            sparkle.style.zIndex = '999';
+            sparkle.textContent = '✨';
+            sparkle.style.left = Math.random() * window.innerWidth + 'px';
+            sparkle.style.top = Math.random() * window.innerHeight + 'px';
+            sparkle.style.animation = 'sparkleFloat 3s ease-out forwards';
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                sparkle.remove();
+            }, 3000);
+        }
+
+        // Add sparkle animation keyframes
+        const sparkleStyle = document.createElement('style');
+        sparkleStyle.textContent = `
+            @keyframes sparkleFloat {
+                0% {
+                    opacity: 1;
+                    transform: translateY(0) rotate(0deg);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateY(-100px) rotate(360deg);
+                }
+            }
+        `;
+        document.head.appendChild(sparkleStyle);
+
+        // Trigger sparkles occasionally
+        setInterval(() => {
+            if (Math.random() < 0.1) { // 10% chance every 2 seconds
+                createSparkle();
+            }
+        }, 2000);
+
+        // TODO: Audio functions to be implemented later
+        /*
+        function playOpeningSound() {
+            // Add crate opening sound effect
+        }
+        
+        function playMoodAudio(moodName) {
+            // Play mood-specific audio/music
+        }
+        
+        function playClosingSound() {
+            // Add modal closing sound effect
+        }
+        */
+    </script>
+    <!--link the script.js here-->
+    <script src="script.js"></script>
+</body>
+</html>
