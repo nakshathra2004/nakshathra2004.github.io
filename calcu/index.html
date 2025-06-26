@@ -1,56 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>📬 Postbag Tools</title>
-  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <title>📬 Enhanced Postbag Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
-<h1>📬 Postbag Tools</h1>
+    <h1>📬 Enhanced Postbag Tools</h1>
 
-<div class="section">
-  <h2>🔧 Upgrade Checker</h2>
-  <label>Current Postbag Limit (min 42):
-    <input type="number" id="currentLimit" value="42" min="42">
-  </label>
-  <label>Available Rubbles:
-    <input type="number" id="rubbles" value="100000">
-  </label>
-  <button onclick="checkUpgrades()">Check Upgrade Possibilities</button>
-  <div class="result" id="resultBox">Enter your current limit and rubbles to see upgrade possibilities!</div>
-</div>
+    <div class="container">
 
-<div class="section">
-  <h2>💰 Fame → Rubbles Calculator</h2>
-  <label>Total Fame:
-    <input type="number" id="fame" value="1000" min="0">
-  </label>
-  <label>Guild Building Buff (%):
-    <input type="number" id="buildingBuff" value="15" min="0" max="15">
-  </label>
-  <label>Guild Level Buff (%):
-    <input type="number" id="levelBuff" value="4" min="0" max="5">
-  </label>
-  <button onclick="calculateRubbles()">Calculate Rubbles</button>
-  <div class="result" id="rubbleResult">Enter your fame and buffs to calculate rubbles!</div>
-</div>
+        <!-- Upgrade Checker -->
+        <div class="section">
+            <h2>🔧 Upgrade Checker</h2>
+            <div class="calculator-grid">
+                <label>Current Postbag Limit:
+                    <input type="number" id="currentLimit" value="42" min="42">
+                </label>
+                <label>Available Rubbles:
+                    <input type="number" id="rubbles" value="100000">
+                </label>
+            </div>
+            <button onclick="checkUpgrades()" class="full-width">Check Upgrade Possibilities</button>
+            <div class="result" id="resultBox">Enter your current limit and rubbles to see upgrade possibilities!</div>
+        </div>
 
-<div class="section">
-  <h2>📬 Postcard Fame Predictor</h2>
-  <div class="pc-adder">
-    <select id="pcTypeSelect">
-      <option value="">Select Postcard Type...</option>
-    </select>
-    <input type="number" id="pcQuantity" placeholder="Qty" min="1" value="1" style="width: 80px;">
-    <button onclick="addPostcard()" style="padding: 0.5rem 1rem; margin: 0;">➕</button>
-  </div>
-  <div id="pcList"></div>
-  <button onclick="calculateFame()">Calculate Total Fame</button>
-  <div class="result" id="fameResult">Select postcards above and click Calculate.</div>
-</div>
+        <!-- Target Postbag Calculator -->
+        <div class="section">
+            <h2>🎯 Target Postbag Calculator</h2>
+            <div class="calculator-grid">
+                <label>Current Postbag Limit:
+                    <input type="number" id="currentLimitTarget" value="42" min="42">
+                </label>
+                <label>Target Postbag Limit:
+                    <input type="number" id="targetLimit" value="100" min="42">
+                </label>
+            </div>
+            <button onclick="calculateTargetCost()" class="full-width">Calculate Required Rubbles</button>
+            <div class="result" id="targetResult">Enter your current and target limits to calculate cost!</div>
+        </div>
 
-<script src="script.js"></script>
+        <!-- Fame to Rubbles Calculator -->
+        <div class="section">
+            <h2>💰 Fame → Rubbles Calculator</h2>
+            <div class="calculator-grid">
+                <label>Total Fame:
+                    <input type="number" id="fame" value="1000" min="0">
+                </label>
+                <label>Guild Building Buff (%):
+                    <input type="number" id="buildingBuff" value="15" min="0" max="15">
+                </label>
+                <label>Guild Level Buff (%):
+                    <input type="number" id="levelBuff" value="4" min="0" max="5">
+                </label>
+            </div>
+            <button onclick="calculateRubbles()" class="full-width">Calculate Rubbles</button>
+            <div class="result" id="rubbleResult">Enter your fame and buffs to calculate rubbles!</div>
+        </div>
+
+        <!-- Postcard Calculator -->
+        <div class="section">
+            <h2>💳 Postcard Purchase Calculator</h2>
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('buy')">Buy Postcards</button>
+                <button class="tab" onclick="switchTab('fame')">Fame Predictor</button>
+            </div>
+
+            <div id="buyTab">
+                <div class="input-group">
+                    <label>Postcard Type:
+                        <select id="buyPcSelect">
+                            <option value="">Select Postcard...</option>
+                        </select>
+                    </label>
+                    <label>Quantity:
+                        <input type="number" id="buyQuantity" value="1" min="1" style="width: 100px;">
+                    </label>
+                    <button onclick="calculatePurchaseCost()">Calculate</button>
+                </div>
+                <div class="result" id="buyResult">Select a postcard and quantity to calculate cost!</div>
+            </div>
+
+            <div id="fameTab" style="display: none;">
+                <div class="input-group">
+                    <label>Postcard Type:
+                        <select id="pcTypeSelect">
+                            <option value="">Select Postcard...</option>
+                        </select>
+                    </label>
+                    <label>Qty:
+                        <input type="number" id="pcQuantity" value="1" min="1" style="width: 80px;">
+                    </label>
+                    <button onclick="addPostcard()">➕ Add</button>
+                </div>
+                <div id="pcList"></div>
+                <button onclick="calculateFame()" class="full-width">Calculate Total Fame</button>
+                <div class="result" id="fameResult">Add postcards above and click Calculate.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
 </body>
+
 </html>
